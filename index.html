@@ -105,12 +105,14 @@ function logEvent(evt){
 function tick(){
   if(active==='left'){
     let factor=leftTime>60?leftMult:1;
-    leftTime-=0.01*factor;
-    if(leftTime<=0){leftTime=0; stopTimer(); leftStatus.textContent='Time out';}
+    leftTime -= 0.01*factor;
+    if(leftTime < 0) leftTime = 0;  // clamp to zero
+    if(leftTime===0){ stopTimer(); leftStatus.textContent='Time out'; }
   } else if(active==='right'){
     let factor=rightTime>60?rightMult:1;
-    rightTime-=0.01*factor;
-    if(rightTime<=0){rightTime=0; stopTimer(); rightStatus.textContent='Time out';}
+    rightTime -= 0.01*factor;
+    if(rightTime < 0) rightTime = 0;  // clamp to zero
+    if(rightTime===0){ stopTimer(); rightStatus.textContent='Time out'; }
   }
   updateDisplay();
 }
@@ -122,11 +124,20 @@ function stopTimer(){running=false; clearInterval(timer); active=null;}
 
 function switchClock(){
   if(!running) return;
-  if(active==='left'){leftTime+=rightInc; active='right'; logEvent('Switched to right');}
-  else if(active==='right'){rightTime+=leftInc; active='left'; logEvent('Switched to left');}
+  if(active==='left'){
+    leftTime += rightInc;
+    if(leftTime < 0) leftTime = 0; // clamp negative increment
+    active='right';
+    logEvent('Switched to right');
+  }
+  else if(active==='right'){
+    rightTime += leftInc;
+    if(rightTime < 0) rightTime = 0; // clamp negative increment
+    active='left';
+    logEvent('Switched to left');
+  }
   updateDisplay();
 }
-
 function resetClock(){
   stopTimer();
   leftTime=document.getElementById('left_init').value*60;
