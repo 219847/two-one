@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Transparent Rig/Simulator Chess Clock</title>
+<style>
+  body{font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;background:#071028;color:#e6eef8;margin:0;padding:18px;display:flex;flex-direction:column;align-items:center;gap:12px;}
+  header{display:flex;align-items:center;gap:12px;width:100%;max-width:1100px;justify-content:space-between}
+  h1{margin:0;font-size:18px}
+  .banner{padding:6px 10px;border-radius:8px;background:linear-gradient(90deg,#ff6161,#ffb4a2);color:#2b0b00;font-weight:800}
+  .container{display:flex;gap:14px;align-items:stretch;max-width:1100px;width:100%}
+  .clock{flex:1;padding:16px;border-radius:12px;background:linear-gradient(180deg,#0b1220,#071028);box-shadow:0 8px 30px rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.03);display:flex;flex-direction:column;align-items:center;gap:8px;}
+  .playerLabel{font-weight:800}
+  .timeDisplay{font-size:48px;font-weight:900;letter-spacing:1px}
+  .small{font-size:13px;color:#bcd3ff}
+  .controls{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:6px}
+  button{padding:8px 12px;border-radius:8px;border:0;background:#1f2937;color:#fff;font-weight:700;cursor:pointer}
+  button.secondary{background:#374151}
+  input[type="number"]{width:110px;padding:6px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:inherit}
+  .muted{color:#9fb2df;font-size:13px;text-align:center}
+  .overlay{position:fixed;left:12px;top:12px;padding:10px 14px;border-radius:10px;background:rgba(90,140,255,0.95);color:#04102b;font-weight:900;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,0.6);}
+  .notice{font-size:13px;color:#ffdede;background:#3b2b2b;padding:6px 10px;border-radius:8px}
+  .settingsPanel{display:flex;flex-direction:column;gap:8px;padding:12px;border-radius:10px;background:rgba(255,255,255,0.03)}
+  .row{display:flex;gap:8px;align-items:center}
+  .logBox{width:100%;max-width:1100px;background:#071022;border-radius:8px;padding:10px;color:#9fb2df;font-size:12px;box-shadow:0 6px 18px rgba(0,0,0,0.6);overflow:auto;max-height:160px}
+  footer{font-size:12px;color:#9fb2df;margin-top:6px}
+  .small-btn{padding:6px 8px;font-size:13px}
+  .danger{background:#8b2b2b}
+  .success{background:#2b8b4f}
+  #replayCanvas{width:100%;height:200px;background:linear-gradient(180deg,#06111c,#041028);border-radius:8px;border:1px solid rgba(255,255,255,0.03);display:flex;align-items:center;justify-content:center;color:#9fb2df}
+  .modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;z-index:9999;display:none;}
+  .modalContent{background:#0b1220;padding:20px;border-radius:12px;display:flex;flex-direction:column;gap:12px;width:300px;}
+</style>
+</head>
+<body>
+  <header>
+    <h1>Transparent Rig/Simulator Chess Clock</h1>
+    <div class="banner">VISIBLE RIG MODE / SIMULATOR</div>
+  </header>
+
+  <div class="container">
+    <div class="clock" id="leftClock">
+      <div class="playerLabel">Left (Player A)</div>
+      <div class="timeDisplay" id="leftTime">05:00.00</div>
+      <div class="small" id="leftLabel">Status: ready</div>
+    </div>
+
+    <div class="clock" id="rightClock">
+      <div class="playerLabel">Right (Player B)</div>
+      <div class="timeDisplay" id="rightTime">05:00.00</div>
+      <div class="small" id="rightLabel">Status: ready</div>
+    </div>
+  </div>
+
+  <div class="controls" style="max-width:1100px;width:100%;justify-content:space-between">
+    <div style="display:flex;gap:8px;align-items:center">
+      <button id="startBtn">Start</button>
+      <button id="switchBtn" class="secondary">Switch</button>
+      <button id="pauseBtn" class="secondary">Pause</button>
+      <button id="resetBtn" class="secondary">Reset (R)</button>
+      <button id="settingsBtn" class="small-btn">Settings (PIN)</button>
+      <button id="downloadLog" class="small-btn">Download CSV</button>
+    </div>
+  </div>
+
+  <div id="settingsArea" style="display:none;max-width:1100px;width:100%;margin-top:8px">
+    <div class="settingsPanel" id="perSideSettings" style="gap:12px">
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <div style="flex:1;min-width:260px">
+          <div style="font-weight:800">Left / Player A settings</div>
+          <div class="row"><label class="small">Initial minutes: <input id="left_init" type="number" min="0" step="0.5" value="5"></label></div>
+          <div class="row"><label class="small">Increment (s, can be negative): <input id="left_inc" type="number" step="0.1" value="0"></label></div>
+          <div class="row"><label class="small">Rig multiplier (>1:00): <input id="left_mult" type="number" step="0.01" min="1" value="1.25"></label></div>
+        </div>
+
+        <div style="flex:1;min-width:260px">
+          <div style="font-weight:800">Right / Player B settings</div>
+          <div class="row"><label class="small">Initial minutes: <input id="right_init" type="number" min="0" step="0.5" value="5"></label></div>
+          <div class="row"><label class="small">Increment (s, can be negative): <input id="right_inc" type="number" step="0.1" value="0"></label></div>
+          <div class="row"><label class="small">Rig multiplier (>1:00): <input id="right_mult" type="number" step="0.01" min="1" value="1.25"></label></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button id="applySettings" class="small-btn success">Apply</button>
+        <button id="closeSettings" class="small-btn secondary">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="logBox" id="logBox" aria-live="polite"></div>
+  <div id="replayCanvas">Replay output will appear here after simulation.</div>
+
+  <div class="modal" id="pinModal">
+    <div class="modalContent">
+      <div>Enter PIN to open settings:</div>
+      <input type="password" id="pinInput" placeholder="PIN" />
+      <div style="display:flex;justify-content:flex-end;gap:8px">
+        <button id="pinSubmit" class="success">Submit</button>
+        <button id="pinCancel" class="secondary">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+(() => {
+  const leftTimeEl = document.getElementById('leftTime');
+  const rightTimeEl = document.getElementById('rightTime');
+  const leftLabel = document.getElementById('leftLabel');
+  const rightLabel = document.getElementById('rightLabel');
+
+  const startBtn = document.getElement
