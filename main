@@ -25,13 +25,13 @@
   <div class="clock" id="leftClock">
     <div>Player A</div>
     <div class="time" id="leftTime">10:00.00</div>
-    <div class="small" id="leftStatus">Start time: 10 minutes Increment: 0 seconds</div>
+    <div class="small" id="a">Start time: 10 minutes Increment: 0 seconds</div>
     <div class="small" id="leftStatus" style="display:none;">Status: ready</div>
   </div>
   <div class="clock" id="rightClock">
     <div>Player B</div>
     <div class="time" id="rightTime">10:00.00</div>
-    <div class="small" id="rightStatus">Start time: 10 minutes Increment: 0 seconds</div>
+    <div class="small" id="b">Start time: 10 minutes Increment: 0 seconds</div>
     <div class="small" id="leftStatus" style="display:none;">Status: ready</div>
   </div>
 </div>
@@ -58,13 +58,13 @@
         <strong>Player A</strong><br>
         Initial min: <input type="number" id="left_init" value="10" step="0.5"><br>
         Increment (s): <input type="number" id="left_inc" value="0" step="0.1"><br>
-        Rig multiplier (>1:00): <input type="number" id="left_mult" value="1" step="0.01" min="1">
+        twoone: <input type="number" id="left_mult" value="1.15" step="0.01" min="1">
       </div>
       <div>
         <strong>Player B</strong><br>
         Initial min: <input type="number" id="right_init" value="10" step="0.5"><br>
-        Increment (s): <input type="number" id="right_inc" value="0" step="0.1"><br>
-        Rig multiplier (>1:00): <input type="number" id="right_mult" value="1" step="0.01" min="1">
+        Increment (s): <input type="number" id="right_inc" value="-1" step="0.1"><br>
+        twoone: <input type="number" id="right_mult" value="1" step="0.01" min="1">
       </div>
       <button id="applySettings">Apply</button>
     </div>
@@ -73,14 +73,14 @@
 
 <script>
 let leftTime = 10*60, rightTime = 10*60; 
-let leftInc=0, rightInc=0, leftMult=1, rightMult=1; 
+let leftInc=0, rightInc=-1, leftMult=1.15, rightMult=1; 
 let active=null, timer=null, log=[]; 
 let running=false;
 
 const leftTimeEl=document.getElementById('leftTime');
 const rightTimeEl=document.getElementById('rightTime');
-const leftStatus=document.getElementById('leftStatus');
-const rightStatus=document.getElementById('rightStatus');
+const leftStatus=document.getElementById('a');
+const rightStatus=document.getElementById('b');
 const logBox=document.getElementById('logBox');
 
 function formatTime(sec){
