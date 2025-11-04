@@ -25,12 +25,12 @@
   <div class="clock" id="leftClock">
     <div>Player A</div>
     <div class="time" id="leftTime">05:00.00</div>
-    <div class="small" id="leftStatus">Status: ready</div>
+    <div class="small" id="leftStatus" style="display:none;">Status: ready</div>
   </div>
   <div class="clock" id="rightClock">
     <div>Player B</div>
     <div class="time" id="rightTime">05:00.00</div>
-    <div class="small" id="rightStatus">Status: ready</div>
+    <div class="small" id="rightStatus" style="display:none;">Status: ready</div>
   </div>
 </div>
 
@@ -46,7 +46,7 @@
 
 <div id="settingsModal">
   <div class="modalContent">
-    <div>Enter PIN to open settings:</div>
+    <div>Bro, you can't cheat by changing the time. Enter PIN to open settings:</div>
     <input type="password" id="pinInput" placeholder="PIN">
     <button id="pinSubmit">Submit</button>
     <button id="pinCancel">Cancel</button>
