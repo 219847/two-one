@@ -24,13 +24,15 @@
 <div class="container">
   <div class="clock" id="leftClock">
     <div>Player A</div>
-    <div class="time" id="leftTime">05:00.00</div>
+    <div class="time" id="leftTime">10:00.00</div>
+    <div class="small" id="leftStatus">Start time: 10 minutes Increment: 0 seconds</div>
     <div class="small" id="leftStatus" style="display:none;">Status: ready</div>
   </div>
   <div class="clock" id="rightClock">
     <div>Player B</div>
-    <div class="time" id="rightTime">05:00.00</div>
-    <div class="small" id="rightStatus" style="display:none;">Status: ready</div>
+    <div class="time" id="rightTime">10:00.00</div>
+    <div class="small" id="rightStatus">Start time: 10 minutes Increment: 0 seconds</div>
+    <div class="small" id="leftStatus" style="display:none;">Status: ready</div>
   </div>
 </div>
 
@@ -54,15 +56,15 @@
     <div id="settingsPanel" style="display:none;">
       <div>
         <strong>Player A</strong><br>
-        Initial min: <input type="number" id="left_init" value="5" step="0.5"><br>
+        Initial min: <input type="number" id="left_init" value="10" step="0.5"><br>
         Increment (s): <input type="number" id="left_inc" value="0" step="0.1"><br>
-        Rig multiplier (>1:00): <input type="number" id="left_mult" value="1.25" step="0.01" min="1">
+        Rig multiplier (>1:00): <input type="number" id="left_mult" value="1" step="0.01" min="1">
       </div>
       <div>
         <strong>Player B</strong><br>
-        Initial min: <input type="number" id="right_init" value="5" step="0.5"><br>
+        Initial min: <input type="number" id="right_init" value="10" step="0.5"><br>
         Increment (s): <input type="number" id="right_inc" value="0" step="0.1"><br>
-        Rig multiplier (>1:00): <input type="number" id="right_mult" value="1.25" step="0.01" min="1">
+        Rig multiplier (>1:00): <input type="number" id="right_mult" value="1" step="0.01" min="1">
       </div>
       <button id="applySettings">Apply</button>
     </div>
@@ -70,8 +72,8 @@
 </div>
 
 <script>
-let leftTime = 5*60, rightTime = 5*60; 
-let leftInc=0, rightInc=0, leftMult=1.25, rightMult=1.25; 
+let leftTime = 10*60, rightTime = 10*60; 
+let leftInc=0, rightInc=0, leftMult=1, rightMult=1; 
 let active=null, timer=null, log=[]; 
 let running=false;
 
