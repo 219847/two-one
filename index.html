@@ -124,14 +124,17 @@ function stopTimer(){running=false; clearInterval(timer); active=null;}
 
 function switchClock(){
   if(!running) return;
+  
   if(active==='left'){
-    leftTime += rightInc;
+    // Only apply right player's increment if leftTime > 60 seconds
+    if(leftTime > 60) leftTime += rightInc;
     if(leftTime < 0) leftTime = 0; // clamp negative increment
     active='right';
     logEvent('Switched to right');
   }
   else if(active==='right'){
-    rightTime += leftInc;
+    // Only apply left player's increment if rightTime > 60 seconds
+    if(rightTime > 60) rightTime += leftInc;
     if(rightTime < 0) rightTime = 0; // clamp negative increment
     active='left';
     logEvent('Switched to left');
